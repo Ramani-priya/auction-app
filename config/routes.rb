@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'sidekiq/web'
 Rails.application.routes.draw do
   # Devise routes
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
     sign_out: 'logout',
-    sign_up: 'register'
+    sign_up: 'register',
   }
 
   # Root path
@@ -23,7 +25,7 @@ Rails.application.routes.draw do
 
   # Auctions
   resources :auctions do
-    resources :bids, only: [:new, :create]
+    resources :bids, only: %i[new create]
     collection do
       get :manage_auctions
     end

@@ -2,7 +2,11 @@
 
 class BidsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_auction, only: [:new, :create]
+  before_action :set_auction, only: %i[new create]
+
+  def index
+    @user_bids = current_user.bids.includes({ auction: :item }).order(created_at: :desc)
+  end
 
   def new
     @bid = @auction.bids.build
@@ -11,14 +15,10 @@ class BidsController < ApplicationController
   def create
     @bid = @auction.bids.build(bid_params.merge(user: current_user))
     if @bid.save
-      redirect_to @auction, notice: "Bid placed successfully!"
+      redirect_to @auction, notice: 'Bid placed successfully!'
     else
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def index
-    @user_bids = current_user.bids.includes({auction: :item}).order(created_at: :desc)
   end
 
   private

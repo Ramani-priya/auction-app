@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :bid do
-    association :user
-    association :auction
+    user
+    auction
     current_bid_price { 100 }
     max_bid_price { 200 }
     status { :active }

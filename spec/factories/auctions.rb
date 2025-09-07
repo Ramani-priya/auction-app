@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :auction do
-    association :item
-    association :seller, factory: :user
-    association :current_highest_bid, factory: :bid
+    item
+    seller factory: %i[user]
+    current_highest_bid factory: %i[bid]
     starting_price { 50.00 }
     min_selling_price { 75.00 }
     start_time { 1.day.ago }

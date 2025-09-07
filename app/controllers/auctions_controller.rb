@@ -2,11 +2,12 @@
 
 class AuctionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_auction, only: [:show, :publish]
+  before_action :set_auction, only: %i[show publish]
 
   def index
     if params[:q].present?
-      @auctions = Auction.active.joins(:item).where("items.title LIKE ?", "#{params[:q]}%")
+      @auctions = Auction.active.joins(:item).where('items.title LIKE ?',
+                                                    "#{params[:q]}%")
     else
       @auctions = Auction.active
     end
@@ -17,11 +18,10 @@ class AuctionsController < ApplicationController
     @published_auctions = current_user.auctions.active
   end
 
+  def show; end
+
   def new
     @auction = Auction.new
-  end
-
-  def show
   end
 
   def drafts
@@ -31,28 +31,27 @@ class AuctionsController < ApplicationController
   def publish
     if @auction.seller == current_user
       if @auction.start_auction!
-        redirect_to auctions_path, notice: "Auction published successfully."
+        redirect_to auctions_path, notice: 'Auction published successfully.'
       else
-        redirect_to auctions_path, alert: "Failed to publish auction."
+        redirect_to auctions_path, alert: 'Failed to publish auction.'
       end
     else
-      redirect_to auctions_path, alert: "Not authorized to publish this auction."
+      redirect_to auctions_path,
+                  alert: 'Not authorized to publish this auction.'
     end
   end
 
   def create
     item = Item.find_by(title: auction_params[:title])
-    unless item
-      item = Item.create(
-        title: auction_params[:title],
-        description: auction_params[:description]
-      )
-    end
+    item ||= Item.create(
+      title: auction_params[:title],
+      description: auction_params[:description],
+    )
     @auction = current_user.auctions.build(
-      auction_params.except(:title, :description).merge(item: item)
+      auction_params.except(:title, :description).merge(item: item),
     )
     if @auction.save
-      redirect_to @auction, notice: "Auction was successfully created." 
+      redirect_to @auction, notice: 'Auction was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end

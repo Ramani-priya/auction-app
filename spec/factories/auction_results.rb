@@ -2,9 +2,9 @@
 
 FactoryBot.define do
   factory :auction_result do
-    association :auction
-    association :winning_bid, factory: :bid
-    association :winner, factory: :user
+    auction
+    winning_bid factory: %i[bid]
+    winner factory: %i[user]
     final_price { winning_bid.current_bid_price }
   end
 end

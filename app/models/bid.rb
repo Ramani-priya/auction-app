@@ -45,19 +45,24 @@ class Bid < ApplicationRecord
   end
 
   def outdate_user_previous_bids
-    auction.bids.where(user_id: user_id, status: :active).where.not(id: id).find_each do |bid|
+    auction.bids.where(user_id: user_id,
+                       status: :active).where.not(id: id).find_each do |bid|
       bid.outdate! if bid.may_outdate?
     end
   end
 
   def trigger_auto_bidding
     return if system_generated
+
     AutoBidJob.perform_async(auction.id) if auction.active?
   end
 
   def price_is_higher_than_current_highest_bid
     if auction.current_highest_bid
-      errors.add(:current_bid_price, 'must be higher than the current highest bid') if current_bid_price <= auction.current_highest_bid.current_bid_price
+      if current_bid_price <= auction.current_highest_bid.current_bid_price
+        errors.add(:current_bid_price,
+                   'must be higher than the current highest bid')
+      end
     elsif current_bid_price < auction.starting_price
       errors.add(:current_bid_price, 'must be at least the starting price')
     end
@@ -65,6 +70,7 @@ class Bid < ApplicationRecord
 
   def max_bid_is_higher_than_current_bid_price
     return unless max_bid_price.present? && max_bid_price < current_bid_price
+
     errors.add(:max_bid_price, 'cannot be less than the current bid price')
   end
 end

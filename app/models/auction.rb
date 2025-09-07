@@ -35,7 +35,7 @@ class Auction < ApplicationRecord
   belongs_to :seller, class_name: 'User'
   has_many :bid_histories
   has_one :auction_result
-  belongs_to :current_highest_bid, class_name: 'Bid', foreign_key: 'current_highest_bid_id', optional: true
+  belongs_to :current_highest_bid, class_name: 'Bid', optional: true
 
   scope :pending_to_end, lambda {
     where(status: :active).where(end_time: ..Time.current)
@@ -70,9 +70,10 @@ class Auction < ApplicationRecord
   end
 
   def min_selling_price_gte_starting_price
-    if min_selling_price < starting_price
-      errors.add(:min_selling_price, "must be greater than or equal to starting price")
-    end
+    return unless min_selling_price < starting_price
+
+    errors.add(:min_selling_price,
+               'must be greater than or equal to starting price')
   end
 
   def minimum_increment
