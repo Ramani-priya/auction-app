@@ -1,0 +1,35 @@
+= form_with(model: auction, local: true) do |f|
+  - if auction&.errors&.any?
+    #error_explanation
+      %h2= "#{pluralize(auction.errors.count, "error")} prohibited this auction from being saved:"
+      %ul
+        - auction.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :title
+    = f.text_field :title
+
+  .field
+    = f.label :description
+    = f.text_area :description
+
+  .field
+    = f.label :starting_price
+    = f.number_field :starting_price, step: 0.1
+  
+  .field
+    = f.label :minimum_selling_price
+    = f.number_field :min_selling_price
+
+  .field
+    = f.label :starts_at
+    = f.datetime_field :start_time, class: "field-input"
+
+  .field
+    = f.label :ends_at
+    = f.datetime_field :end_time, class: "field-input"
+
+  .actions
+    = f.submit "Submit Auction", class: "button btn btn-primary"
+    = link_to 'Back', auctions_path, class: "btn button-link btn-primary"

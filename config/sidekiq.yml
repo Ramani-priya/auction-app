@@ -1,0 +1,7 @@
+# config/sidekiq.yml
+end_auctions:
+  cron: "*/1 * * * *" # every 1 minute
+  class: "EndAuctionsJob"
+  queue: default
+  description: "Job to end auctions that have reached their end time"
+

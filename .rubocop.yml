@@ -1,0 +1,87 @@
+# .rubocop.yml
+
+require:
+  - rubocop-rails
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+  Exclude: 
+    - 'db/schema.rb'
+    - 'bin/**/*'
+    - 'node_modules/**/*'
+    - 'public/**/*'
+    - 'tmp/**/*'
+
+# Enforce Style Guide rules (from https://rubystyle.guide/)
+Layout/LineLength:
+  Max: 80
+
+Layout/IndentationWidth:
+  Width: 2
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+Style/NumericLiterals:
+  Enabled: true
+
+Style/MethodCallWithArgsParentheses:
+  EnforcedStyle: require_parentheses
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/RedundantSelf:
+  Enabled: true
+
+Layout/SpaceAroundOperators:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/MethodLength:
+  Max: 20
+
+Metrics/ClassLength:
+  Max: 200
+
+# Rails specific cops
+Rails/HasAndBelongsToMany:
+  Enabled: true
+
+Rails/OutputSafety:
+  Enabled: true
+
+Rails/TimeZone:
+  Enabled: true
+
+# Performance cops
+Performance/Detect:
+  Enabled: true
+
+Performance/RedundantMerge:
+  Enabled: true
+
+# RSpec cops
+RSpec/ExampleLength:
+  Max: 15

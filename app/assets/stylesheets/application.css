@@ -1,15 +1,226 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
+
+:root {
+  --color-primary: #3498db;
+  --color-primary-hover: #2980b9;
+  --color-danger: #db4f5d;
+  --color-danger-hover: #c0392b;
+  --color-success: #27ae60;
+  --color-text-dark: #2c3e50;
+  --color-text-muted: #7f8c8d;
+  --color-bg-page: #f9f9f9;
+  --color-bg-card: #ffffff;
+  --color-border: #e0e0e0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-dark);
+  margin: 0;
+  padding: 20px;
+}
+
+h1, h2 {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.page-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  max-width: 95vw;
+  margin: 0 auto;
+  padding: 20px;
+  height: auto;
+  background-color: var(--color-bg-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+.field label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.field input,
+.field select {
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.button, .button-link, .card-button, .btn {
+  display: inline-block;
+  padding: 0.5em 1.2em;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+  width: fit-content;
+  margin: 10px;
+}
+
+.button, .button-link, .card-button {
+  background-color: var(--color-primary);
+  color: #fff;
+
+  &:hover {
+    background-color: var(--color-primary-hover);
+    text-decoration: none;
+  }
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: #fff;
+
+  &:hover {
+    background-color: var(--color-danger-hover);
+  }
+}
+
+.card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  padding: 16px;
+  margin: 12px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  }
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  color: var(--color-text-dark);
+}
+
+.card-link {
+  text-decoration: none;
+  color: var(--color-primary);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.card-price {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--color-success);
+}
+
+.card-description {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: var(--color-text-muted);
+}
+
+.nav-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th, .table td {
+  border: 1px solid var(--color-border);
+  padding: 10px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+}
+
+.info {
+  background-color: #e9f7ef;
+  border: 1px solid #d4edda;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.info strong {
+  color: var(--color-success);
+}
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.search-bar button {
+  padding: 0px 12px;
+  border: none;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--color-primary-hover);
+  }
+}
+
+#error_explanation {
+  background-color: #ffe5e5;
+  border: 1px solid #ffcccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+#error_explanation h2 {
+  margin-top: 0;
+  color: #dc0000;
+}
+
+#error_explanation ul {
+  margin: 0;
+  padding-left: 20px;
+}

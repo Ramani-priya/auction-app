@@ -1,0 +1,55 @@
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  padding: 16px;
+  margin: 12px 0;
+  background-color: #ffffff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  }
+}
+
+.card-title {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.card-link {
+  text-decoration: none;
+  color: #3498db;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.card-price {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #27ae60;
+}
+
+.card-description {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: #7f8c8d;
+}
+
+.card-button {
+  display: inline-block;
+  background-color: #3498db;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  
+  &:hover {
+    background-color: #2980b9;
+  }
+}

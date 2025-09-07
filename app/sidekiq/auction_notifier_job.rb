@@ -1,4 +1,5 @@
-# app/sidekiq/auction_notifier_job.rb
+# frozen_string_literal: true
+
 class AuctionNotifierJob
   include Sidekiq::Job
 
@@ -6,7 +7,6 @@ class AuctionNotifierJob
     auction = Auction.find(auction_id)
     user = User.find(user_id)
 
-    # Example: send email/notification
-    puts "Auction #{auction.title} won by #{user.email}"
+    Rails.logger.debug { "Auction #{auction.title} won by #{user.email}" }
   end
 end

@@ -1,0 +1,20 @@
+- show_price = local_assigns.fetch(:show_price, false)
+- show_description = local_assigns.fetch(:show_description, false)
+- show_details = local_assigns.fetch(:show_details, false)
+- show_publish = local_assigns.fetch(:show_publish, false)
+.card
+  %h3.card-title= link_to auction.title, auction_path(auction), class: "card-link"
+  
+  - if show_price
+    %p.card-price
+      = "Current Price: $#{auction.current_highest_bid&.current_bid_price || auction.starting_price}"
+
+  - if show_description
+    %p.card-description= auction.description
+
+  %div.page-wrapper
+    - if show_details
+      = link_to "View Details", auction_path(auction), class: "card-button"
+
+    - if show_publish
+      = button_to "Publish", publish_auction_path(auction), method: :patch, class: "card-button"

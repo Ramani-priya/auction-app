@@ -1,0 +1,14 @@
+- auction = bid.auction
+
+.card
+  %h3.card-title
+    = link_to auction.title, auction_path(auction), class: "card-link"
+
+  %p.card-price
+    = "Your Bid: $#{bid.current_bid_price}"
+
+  %p.card-description
+    = "Placed on #{bid.created_at.strftime('%b %d, %Y at %I:%M %p')}"
+
+  .page-wrapper
+    = link_to "View Auction", auction_path(auction), class: "card-button btn btn-primary"

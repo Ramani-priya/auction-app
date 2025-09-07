@@ -1,0 +1,10 @@
+%h1 Auctions
+
+= form_with url: auctions_path, method: :get, local: true do |f|
+  %div.search-bar
+    = f.text_field :q, placeholder: "Search auctions...", value: params[:q], class: "search-bar"
+    = f.submit "Search", class: "button btn btn-primary"
+
+- @auctions.each do |auction|
+  = render "auctions/auction_card", auction: auction, show_price: true, show_description: true, show_details: true
+= link_to "← Back", :back, class: "button btn btn-secondary"

@@ -1,0 +1,23 @@
+= form_with model: [@auction, bid], local: true do |f|
+  - if bid.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(bid.errors.count, 'error')} prohibited this bid from being saved:"
+      %ul
+        - bid.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :bid_price
+    = f.number_field :current_bid_price, class: "form-control"
+
+  
+  .field
+    = f.label :maximum_bid_price
+    = f.number_field :max_bid_price, class: "form-control"
+
+  .field
+    = f.label :auto_bid
+    = f.check_box :autobid, class: "form-control"
+
+  .actions
+    = f.submit "Place Bid", class: "button btn btn-primary"
