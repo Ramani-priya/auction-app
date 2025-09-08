@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'auction_errors'
 class AutoBidJob
   include Sidekiq::Job

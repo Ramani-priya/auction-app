@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBidService
   def initialize(auction, bid_params, user)
     @auction = auction

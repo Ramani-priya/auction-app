@@ -2,6 +2,7 @@
 
 class Bid < ApplicationRecord
   include BidStateMachine
+
   enum :status, { outdated: 0, active: 1, winning: 2 }
 
   belongs_to :auction

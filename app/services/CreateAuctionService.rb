@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateAuctionService
   def initialize(auction_params, user)
     @auction_params = auction_params
@@ -9,7 +11,7 @@ class CreateAuctionService
       item = Item.find_by(title: @auction_params[:title])
       item ||= Item.create!(
         title: @auction_params[:title],
-        description: @auction_params[:description]
+        description: @auction_params[:description],
       )
       @auction = @user.auctions.build(
         @auction_params.except(:title, :description).merge(item: item),

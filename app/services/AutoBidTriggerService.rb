@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AutoBidTriggerService
   def initialize(auction)
     @auction = auction

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EndAuctionService
   def initialize(auction)
     @auction = auction
@@ -5,6 +7,7 @@ class EndAuctionService
 
   def call
     return unless @auction.active? && @auction.end_time <= Time.current
+
     ActiveRecord::Base.transaction do
       @auction.end_auction!
     rescue StandardError => e

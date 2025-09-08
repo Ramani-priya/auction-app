@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 module AuctionStateMachine
   extend ActiveSupport::Concern
 
   included do
     include AASM
+
     aasm column: 'status', enum: true do
       state :draft, initial: true
       state :active

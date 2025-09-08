@@ -11,12 +11,15 @@ class AuctionsController < ApplicationController
     else
       @auctions = Auction.active
     end
-    @auctions = @auctions.includes(:item, :current_highest_bid).page(params[:page])
+    @auctions = @auctions.includes(:item,
+                                   :current_highest_bid).page(params[:page])
   end
 
   def manage_auctions
-    @draft_auctions = current_user.auctions.draft.includes(:item, :current_highest_bid)
-    @published_auctions = current_user.auctions.active.includes(:item, :current_highest_bid)
+    @draft_auctions = current_user.auctions.draft.includes(:item,
+                                                           :current_highest_bid)
+    @published_auctions = current_user.auctions.active.includes(:item,
+                                                                :current_highest_bid)
   end
 
   def show; end
