@@ -11,21 +11,18 @@ class AuctionsController < ApplicationController
     else
       @auctions = Auction.active
     end
+    @auctions = @auctions.includes(:item, :current_highest_bid).page(params[:page])
   end
 
   def manage_auctions
-    @draft_auctions = current_user.auctions.draft
-    @published_auctions = current_user.auctions.active
+    @draft_auctions = current_user.auctions.draft.includes(:item, :current_highest_bid)
+    @published_auctions = current_user.auctions.active.includes(:item, :current_highest_bid)
   end
 
   def show; end
 
   def new
     @auction = Auction.new
-  end
-
-  def drafts
-    @drafts = current_user.auctions.where(status: :draft)
   end
 
   def publish
@@ -42,28 +39,11 @@ class AuctionsController < ApplicationController
   end
 
   def create
-    item = Item.find_by(title: auction_params[:title])
-    item ||= Item.create(
-      title: auction_params[:title],
-      description: auction_params[:description],
-    )
-    @auction = current_user.auctions.build(
-      auction_params.except(:title, :description).merge(item: item),
-    )
-    if @auction.save
+    @auction = CreateAuctionService.new(auction_params, current_user).call
+    if @auction.persisted?
       redirect_to @auction, notice: 'Auction was successfully created.'
     else
       render :new, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    @auction = current_user.auctions.find(params[:id])
-    if @auction.update(auction_params)
-      render json: @auction
-    else
-      render json: { errors: @auction.errors.full_messages },
-             status: :unprocessable_entity
     end
   end
 

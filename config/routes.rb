@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   get 'dashboard', to: 'dashboard#index'
 
   # Auctions
-  resources :auctions do
+  resources :auctions, only: %i[index show new create] do
     resources :bids, only: %i[new create]
     collection do
       get :manage_auctions

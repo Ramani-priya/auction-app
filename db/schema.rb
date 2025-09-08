@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_09_07_133420) do
+ActiveRecord::Schema[7.0].define(version: 2025_09_08_202959) do
   create_table "auction_results", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "auction_id", null: false
     t.bigint "winning_bid_id", null: false
@@ -37,7 +37,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_09_07_133420) do
     t.integer "lock_version", default: 0, null: false
     t.index ["current_highest_bid_id"], name: "index_auctions_on_current_highest_bid_id"
     t.index ["item_id"], name: "index_auctions_on_item_id"
+    t.index ["seller_id", "status"], name: "index_auctions_on_seller_id_and_status"
     t.index ["seller_id"], name: "index_auctions_on_seller_id"
+    t.index ["status", "end_time"], name: "index_auctions_on_status_and_end_time"
   end
 
   create_table "bid_histories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -65,7 +67,11 @@ ActiveRecord::Schema[7.0].define(version: 2025_09_07_133420) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "lock_version", default: 0, null: false
+    t.bigint "parent_id"
+    t.index ["auction_id", "status", "autobid", "max_bid_price", "created_at"], name: "index_bids_on_auction_status_autobid_maxbid_created"
     t.index ["auction_id"], name: "index_bids_on_auction_id"
+    t.index ["parent_id"], name: "index_bids_on_parent_id"
+    t.index ["user_id", "status"], name: "index_bids_on_user_id_and_status"
     t.index ["user_id"], name: "index_bids_on_user_id"
   end
 
@@ -97,5 +103,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_09_07_133420) do
   add_foreign_key "bid_histories", "auctions"
   add_foreign_key "bid_histories", "bids"
   add_foreign_key "bids", "auctions"
+  add_foreign_key "bids", "bids", column: "parent_id"
   add_foreign_key "bids", "users"
 end

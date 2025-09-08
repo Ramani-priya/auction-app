@@ -1,23 +1,9 @@
 # frozen_string_literal: true
 
 class Bid < ApplicationRecord
-  enum :status, { outdated: 0, active: 1 }
-  include AASM
+  include BidStateMachine
+  enum :status, { outdated: 0, active: 1, winning: 2 }
 
-  aasm column: 'status', enum: true do
-    state :active, initial: true
-    state :outdated # a state to indicate this bid is former bid for a user
-    state :winning
-
-    event :outdate do
-      transitions from: :active, to: :outdated
-    end
-    event :win do
-      transitions from: :active, to: :winning
-    end
-  end
-
-  has_many :bid_histories
   belongs_to :auction
   belongs_to :user
   has_one :auction_result, foreign_key: :winning_bid_id
@@ -29,32 +15,14 @@ class Bid < ApplicationRecord
   validate :price_is_higher_than_current_highest_bid, on: :create
   validate :max_bid_is_higher_than_current_bid_price
 
-  after_commit :trigger_auto_bidding, on: :create
-  after_commit :check_and_process_bid, on: :create
-  after_commit :outdate_user_previous_bids, on: :create
+  after_create :run_bid_callbacks
 
   scope :autobid, -> { where(autobid: true) }
-  scope :system_generated, -> { where(system_generated: true) }
 
   private
 
-  def check_and_process_bid
-    auction.with_lock do
-      auction.update!(current_highest_bid: self)
-    end
-  end
-
-  def outdate_user_previous_bids
-    auction.bids.where(user_id: user_id,
-                       status: :active).where.not(id: id).find_each do |bid|
-      bid.outdate! if bid.may_outdate?
-    end
-  end
-
-  def trigger_auto_bidding
-    return if system_generated
-
-    AutoBidJob.perform_async(auction.id) if auction.active?
+  def run_bid_callbacks
+    BidProcessingService.new(self).call
   end
 
   def price_is_higher_than_current_highest_bid

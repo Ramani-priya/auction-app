@@ -1,4 +1,3 @@
-# config/sidekiq.yml
 end_auctions:
   cron: "*/1 * * * *" # every 1 minute
   class: "EndAuctionsJob"

@@ -13,8 +13,8 @@ class BidsController < ApplicationController
   end
 
   def create
-    @bid = @auction.bids.build(bid_params.merge(user: current_user))
-    if @bid.save
+    @bid = CreateBidService.new(@auction, bid_params, current_user).call
+    if @bid.persisted?
       redirect_to @auction, notice: 'Bid placed successfully!'
     else
       render :new, status: :unprocessable_entity

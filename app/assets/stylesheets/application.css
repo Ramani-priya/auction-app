@@ -75,7 +75,7 @@ h1, h2 {
   outline: none;
 }
 
-.button, .button-link, .card-button, .btn {
+a, input[type="submit"], input[type="button"], .button, .button-link, .card-button, .btn {
   display: inline-block;
   padding: 0.5em 1.2em;
   border-radius: 4px;
@@ -89,7 +89,7 @@ h1, h2 {
   margin: 10px;
 }
 
-.button, .button-link, .card-button {
+a, input[type="submit"], input[type="button"], .button, .button-link, .card-button {
   background-color: var(--color-primary);
   color: #fff;
 
@@ -97,6 +97,14 @@ h1, h2 {
     background-color: var(--color-primary-hover);
     text-decoration: none;
   }
+}
+
+.card-link {
+  background-color: var(--color-bg-card);
+  margin: 0px;
+  padding: 0px;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .btn-danger {
