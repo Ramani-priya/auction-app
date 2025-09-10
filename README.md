@@ -73,15 +73,19 @@ Minimal required gems for submission:
 
 rails, mysql2, puma
 
-devise (authentication)
+devise user management, authentication
 
 sidekiq, sidekiq-scheduler (background jobs)
 
-haml-rails (views)
+haml-rails (views), letter_opener for local email testing, kaminari for pagination
 
 rspec-rails, factory_bot_rails, faker (tests)
 
 rubocop, rubocop-rails, rubocop-performance
+
+webmock for external api mock tests
+
+pry, pry-debug for debugging
 
 
 Install the gem dependencies
@@ -91,7 +95,7 @@ bundle install
 
 Set up the database:
 
-rails db:create db:migrate db:seed
+rails db:create db:migrate (optional RAILS_ENV=test if setting up test db)
 
 
 Start Sidekiq for background jobs:
@@ -110,15 +114,37 @@ Usage
 
 Sign up or log in as a user.
 
-Navigate to Manage Auctions to create new auctions.
+The dashboard is a KISS principle based design, where we show sell / buy / my bids
 
-Draft auctions can be published later.
+Navigate to Sell space (Manage Auctions) to create new auctions, publish draft auctions, view the auctions currently published by you.
 
-View all published auctions to place bids.
+Draft auctions can be published later (publish button)
 
-Monitor your active bids in the My Bids section.
+View all published and active auctions in the Buy space to place bids, users who are not sellers of the auction can place bid
+
+You can choose to place autobids, so if a new buyer bids for a higher price an autobid is created on behalf of you with minimum increment as long as it is less than the max bid price you choose while placing a bid
+
+Monitor all your active bids in the My Bids section.
 
 Auctions automatically end, and the highest bidder wins if the price meets the minimum selling price.
+
+Refer to below screenshots for a quick reference:
+<img width="1393" height="717" alt="Screenshot 2025-09-11 at 12 44 10 AM" src="https://github.com/user-attachments/assets/b5a6460d-904d-45f3-9731-cad85b93fba5" />
+<img width="1378" height="519" alt="Screenshot 2025-09-11 at 12 45 09 AM" src="https://github.com/user-attachments/assets/7bd52af0-c75c-4559-8573-9aa0e0347b7a" />
+<img width="1382" height="715" alt="Screenshot 2025-09-11 at 12 47 02 AM" src="https://github.com/user-attachments/assets/7bbfe0bb-ac14-4554-a96b-5b4955fa6595" />
+<img width="1426" height="715" alt="Screenshot 2025-09-11 at 12 46 31 AM" src="https://github.com/user-attachments/assets/47a3741d-6359-44a8-a922-68d860de4ef4" />
+<img width="1388" height="608" alt="Screenshot 2025-09-11 at 12 47 18 AM" src="https://github.com/user-attachments/assets/1372ac6d-1df0-475d-994d-b4e686bf0247" />
+<img width="1348" height="379" alt="Screenshot 2025-09-11 at 12 47 31 AM" src="https://github.com/user-attachments/assets/c0fc3a2c-451f-49e4-8926-c0ecedba5e16" />
+<img width="1341" height="519" alt="Screenshot 2025-09-11 at 12 47 40 AM" src="https://github.com/user-attachments/assets/18d73e40-d2e7-4e62-a362-a569b429c45d" />
+<img width="1366" height="612" alt="Screenshot 2025-09-11 at 12 48 27 AM" src="https://github.com/user-attachments/assets/32a995ec-0841-4a13-ac94-35b20cf67477" />
+
+External intergrations and emails after auction has ended
+<img width="1099" height="344" alt="Screenshot 2025-09-11 at 12 24 40 AM" src="https://github.com/user-attachments/assets/346ee485-b0c5-44c3-ae99-9cbf73d0d33f" />
+<img width="1211" height="416" alt="Screenshot 2025-09-11 at 12 25 29 AM" src="https://github.com/user-attachments/assets/3af05337-4c38-4f5a-9314-41270c791238" />
+<img width="1217" height="357" alt="Screenshot 2025-09-11 at 12 25 42 AM" src="https://github.com/user-attachments/assets/4fafd834-3f20-4190-85d6-cd74483b7e65" />
+<img width="1322" height="653" alt="Screenshot 2025-09-11 at 12 24 57 AM" src="https://github.com/user-attachments/assets/0574cab7-8949-4418-9a9d-cb6439226d25" />
+
+
 
 Cron Jobs & Background Workers
 
@@ -139,11 +165,20 @@ Test coverage includes:
 
 Auction creation, publishing, and deletion
 
-Bidding workflow
+Bidding workflow including bid creation, autobid processes
+
+View specs, helper specs, model specs for validations, callbacks
+
+services specs, notifier specs
 
 Background job execution
 
 Authentication and user-specific views
+
+<img width="1066" height="139" alt="Screenshot 2025-09-11 at 12 27 18 AM" src="https://github.com/user-attachments/assets/56e580f2-00aa-42fe-9973-318922552b67" />
+
+
+
 
 Code Quality
 
