@@ -55,6 +55,36 @@ Testing: RSpec (optional for unit and integration tests)
 
 Version Control: Git & GitHub
 
+Key Assumptions & Design Decisions
+Data Immutability
+Auctions and Bids: For simplicity and to prevent race conditions, we've made auctions and bids immutable. They cannot be edited, deleted, or archived once they are placed.
+
+Drafts: Sellers can edit auctions while they are in the draft state. Once an auction is published, it becomes immutable. This aligns with a clean and predictable data model.
+
+Concurrency and Race Conditions
+Simultaneous Bids: In the rare event that two bids are placed at the exact same time, optimistic locking is used to handle the conflict. One of the database transactions will fail with a StaleObjectError. The user will receive a 422 Unprocessable Entity response, preventing a bad state and requiring them to retry the bid.
+
+Auto-Bid Job Queue: Auto-bid requests are processed by a Sidekiq job queue, which processes bids in a first-in, first-out (FIFO) order. This ensures fairness and predictable behavior. If a manual bid and an auto-bid attempt to update the auction simultaneously, the same optimistic locking mechanism will apply.
+
+To account for the edge case where multiple auto-bidders have the same max_bid_price, you need to refine your auto-bidding algorithm's logic. This scenario requires a tie-breaker rule, which is typically based on the bid's creation time.
+
+Here's the refined logic to handle this case, along with the updated determine_final_price method and its corresponding explanation for the README.
+
+Auto-Bidding Logic
+The core auto-bidding algorithm is designed to ensure the winning bidder always pays the lowest possible amount while outbidding the competition. The logic is based on three key factors: the highest max bid, the second-highest max bid, and the earliest creation time for ties.
+
+Winning Bidder: The bidder with the highest max_bid_price wins the outbidding war. In case of a tie in max_bid_price, the bidder who placed their auto-bid earliest (first to bid) wins.
+
+Winning Price: The final price is determined by the min() of two values:
+
+The highest bidder's max_bid_price.
+
+The second-highest bidder's max_bid_price plus the auction's minimum_increment.
+
+Handling Ties: If multiple bidders have the same max_bid_price, the second-highest bid is effectively the current highest bid since they are tied. The new bid will be created by the first bidder to place their bid at the price of the current highest bid + the minimum increment.
+
+This approach ensures that a bidder never pays more than necessary to win the auction.
+
 
 Installation
 
@@ -177,8 +207,13 @@ Authentication and user-specific views
 
 <img width="1066" height="139" alt="Screenshot 2025-09-11 at 12 27 18 AM" src="https://github.com/user-attachments/assets/56e580f2-00aa-42fe-9973-318922552b67" />
 
+Future Improvements
 
-
+* Authorization gems
+* Caching
+* API and Webhooks extended configuration support
+* Real-time Updates
+* Payment and Settlement
 
 Code Quality
 
