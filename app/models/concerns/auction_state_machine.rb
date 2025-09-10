@@ -30,18 +30,7 @@ module AuctionStateMachine
     end
 
     def sold_auction_callback
-      return unless current_highest_bid
-      return if current_highest_bid.current_bid_price < min_selling_price
-
-      ActiveRecord::Base.transaction do
-        create_auction_result(
-          winning_bid: current_highest_bid,
-          winner: current_highest_bid.user,
-          final_price: current_highest_bid.current_bid_price,
-        )
-        current_highest_bid.win!
-        NotifyWinnerJob.perform_async(id)
-      end
+      SoldAuctionService.new(self).call
     end
 
     def no_winner?

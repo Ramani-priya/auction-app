@@ -56,6 +56,9 @@ class AuctionsController < ApplicationController
 
   def set_auction
     @auction = Auction.find_by(id: params[:id])
+    return if @auction
+
+    redirect_to auctions_path, alert: 'Auction does not exist'
   end
 
   def authorize_seller

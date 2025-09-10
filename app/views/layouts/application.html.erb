@@ -28,6 +28,18 @@
         </div>
       </nav>
     </header>
+    <% flash.each do |type, message| %>
+      <% next if message.blank? %>
+      <% flash_class =
+          case type.to_sym
+          when :notice then "flash-notice"
+          when :alert then "flash-alert"
+          else "flash-info"
+          end %>
+      <div class="<%= flash_class %>">
+        <%= message %>
+      </div>
+    <% end %>
     <%= yield %>
     <footer>
       <p>&copy; 2025 BidSphere</p>

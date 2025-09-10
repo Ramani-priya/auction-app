@@ -8,14 +8,15 @@ class CreateBidService
   end
 
   def call
+    @bid = @auction.bids.build(@bid_params.merge(user: @user))
+
     unless @auction.in_progress?
-      raise AuctionErrors::AuctionInactiveError,
-            'Auction is not active'
+      @bid.errors.add(:base, 'Auction is not active')
+      return @bid
     end
 
     @bid = nil
     ActiveRecord::Base.transaction do
-      @bid = @auction.bids.build(@bid_params.merge(user: @user))
       @bid.save
     end
     @bid
