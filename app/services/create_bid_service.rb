@@ -15,7 +15,6 @@ class CreateBidService
       return @bid
     end
 
-    @bid = nil
     ActiveRecord::Base.transaction do
       @bid.save
     end
