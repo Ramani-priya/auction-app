@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_09_08_202959) do
+ActiveRecord::Schema[7.0].define(version: 2025_09_10_062048) do
   create_table "auction_results", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "auction_id", null: false
     t.bigint "winning_bid_id", null: false
@@ -35,6 +35,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_09_08_202959) do
     t.datetime "updated_at", null: false
     t.bigint "current_highest_bid_id"
     t.integer "lock_version", default: 0, null: false
+    t.text "description"
     t.index ["current_highest_bid_id"], name: "index_auctions_on_current_highest_bid_id"
     t.index ["item_id"], name: "index_auctions_on_item_id"
     t.index ["seller_id", "status"], name: "index_auctions_on_seller_id_and_status"
@@ -77,9 +78,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_09_08_202959) do
 
   create_table "items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
-    t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["title"], name: "index_items_on_title"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

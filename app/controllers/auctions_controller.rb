@@ -3,6 +3,7 @@
 class AuctionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_auction, only: %i[show publish]
+  before_action :authorize_seller, only: [:publish]
 
   def index
     if params[:q].present?
@@ -11,8 +12,9 @@ class AuctionsController < ApplicationController
     else
       @auctions = Auction.active
     end
-    @auctions = @auctions.includes(:item,
-                                   :current_highest_bid).page(params[:page])
+    @auctions = @auctions.includes(:item,:current_highest_bid)
+                  .page(params[:page])
+                  .per(10) 
   end
 
   def manage_auctions
@@ -29,15 +31,10 @@ class AuctionsController < ApplicationController
   end
 
   def publish
-    if @auction.seller == current_user
-      if @auction.start_auction!
-        redirect_to auctions_path, notice: 'Auction published successfully.'
-      else
-        redirect_to auctions_path, alert: 'Failed to publish auction.'
-      end
+    if @auction.start_auction!
+      redirect_to auctions_path, notice: 'Auction published successfully.'
     else
-      redirect_to auctions_path,
-                  alert: 'Not authorized to publish this auction.'
+      redirect_to auctions_path, alert: 'Failed to publish auction.'
     end
   end
 
@@ -59,5 +56,11 @@ class AuctionsController < ApplicationController
 
   def set_auction
     @auction = Auction.find_by(id: params[:id])
+  end
+
+  def authorize_seller
+    unless @auction.seller == current_user
+      redirect_to auctions_path, alert: 'Not authorized to publish this auction.'
+    end
   end
 end

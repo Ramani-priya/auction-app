@@ -7,4 +7,7 @@
 
 - @auctions.each do |auction|
   = render "auctions/auction_card", auction: auction, show_price: true, show_description: true, show_details: true
+
+= paginate @auctions
+
 = link_to "← Back", :back, class: "button btn btn-secondary"

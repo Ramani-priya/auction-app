@@ -8,6 +8,8 @@ class CreateBidService
   end
 
   def call
+    raise AuctionErrors::AuctionInactiveError, "Auction is not active" unless @auction.active?
+    @bid = nil
     ActiveRecord::Base.transaction do
       @bid = @auction.bids.build(@bid_params.merge(user: @user))
       @bid.save

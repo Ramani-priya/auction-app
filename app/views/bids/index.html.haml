@@ -1,3 +1,5 @@
 - @user_bids.each do |bid|
   = render "bids/bid_card", bid: bid
 = link_to "← Back", :back, class: "button btn btn-secondary"
+
+= paginate @user_bids

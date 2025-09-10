@@ -29,14 +29,15 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+/config/credentials.yml.enc
 
-/public/packs
-/public/packs-test
-/node_modules
-/yarn-error.log
-yarn-debug.log*
-.yarn-integrity
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
-Procfie.dev
+Procfile.dev
+
+.env
+.env.* 
+config/local_env.yml
+
+/config/webhooks.yml

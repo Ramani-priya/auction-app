@@ -8,15 +8,11 @@ class CreateAuctionService
 
   def call
     ActiveRecord::Base.transaction do
-      item = Item.find_by(title: @auction_params[:title])
-      item ||= Item.create!(
-        title: @auction_params[:title],
-        description: @auction_params[:description],
-      )
+      item = Item.find_or_create_by!(title: @auction_params[:title])
       @auction = @user.auctions.build(
-        @auction_params.except(:title, :description).merge(item: item),
+        @auction_params.except(:title).merge(item: item),
       )
-      @auction.save
+      @auction.save!
     end
     @auction
   end

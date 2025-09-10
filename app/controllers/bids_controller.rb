@@ -5,7 +5,10 @@ class BidsController < ApplicationController
   before_action :set_auction, only: %i[new create]
 
   def index
-    @user_bids = current_user.bids.includes({ auction: :item }).order(created_at: :desc)
+    @user_bids = current_user.bids.includes({ auction: :item })
+                  .order(created_at: :desc)
+                  .page(params[:page])
+                  .per(10)
   end
 
   def new

@@ -24,7 +24,7 @@ class Auction < ApplicationRecord
     active.where(end_time: ..Time.current)
   }
 
-  delegate :title, :description, to: :item, allow_nil: true
+  delegate :title, to: :item, allow_nil: true
 
   def trigger_auto_bidding
     if saved_change_to_current_highest_bid_id? && current_highest_bid.present? && active?
@@ -50,6 +50,7 @@ class Auction < ApplicationRecord
   private
 
   def min_selling_price_gte_starting_price
+    return if min_selling_price.nil? || starting_price.nil?
     return unless min_selling_price < starting_price
 
     errors.add(:min_selling_price,
