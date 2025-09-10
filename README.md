@@ -168,10 +168,12 @@ Refer to below screenshots for a quick reference:
 <img width="1341" height="519" alt="Screenshot 2025-09-11 at 12 47 40 AM" src="https://github.com/user-attachments/assets/18d73e40-d2e7-4e62-a362-a569b429c45d" />
 <img width="1366" height="612" alt="Screenshot 2025-09-11 at 12 48 27 AM" src="https://github.com/user-attachments/assets/32a995ec-0841-4a13-ac94-35b20cf67477" />
 
-External intergrations and emails after auction has ended
+emails after auction has ended
 <img width="1099" height="344" alt="Screenshot 2025-09-11 at 12 24 40 AM" src="https://github.com/user-attachments/assets/346ee485-b0c5-44c3-ae99-9cbf73d0d33f" />
 <img width="1211" height="416" alt="Screenshot 2025-09-11 at 12 25 29 AM" src="https://github.com/user-attachments/assets/3af05337-4c38-4f5a-9314-41270c791238" />
 <img width="1217" height="357" alt="Screenshot 2025-09-11 at 12 25 42 AM" src="https://github.com/user-attachments/assets/4fafd834-3f20-4190-85d6-cd74483b7e65" />
+
+External integrations (webhooks, configure in webhooks.yml file)
 <img width="1322" height="653" alt="Screenshot 2025-09-11 at 12 24 57 AM" src="https://github.com/user-attachments/assets/0574cab7-8949-4418-9a9d-cb6439226d25" />
 
 
