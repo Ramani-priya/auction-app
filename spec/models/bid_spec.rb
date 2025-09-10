@@ -19,7 +19,8 @@ RSpec.describe Bid do
 
   describe 'enums' do
     it {
-      expect(subject).to define_enum_for(:status).with_values(outdated: 0, active: 1, winning: 2)
+      expect(subject).to define_enum_for(:status).with_values(outdated: 0,
+                                                              active: 1, winning: 2)
     }
   end
 
@@ -38,7 +39,7 @@ RSpec.describe Bid do
           user: user,
           autobid: true,
           current_bid_price: 100,
-          max_bid_price: nil
+          max_bid_price: nil,
         )
       end
 
@@ -53,7 +54,8 @@ RSpec.describe Bid do
         create(:bid, auction: auction, user: user, current_bid_price: 200)
       end
       let(:new_bid) do
-        build(:bid, auction: auction, user: create(:user), current_bid_price: 150)
+        build(:bid, auction: auction, user: create(:user),
+                    current_bid_price: 150)
       end
 
       it 'is invalid if not higher than current highest bid' do
@@ -64,7 +66,8 @@ RSpec.describe Bid do
 
     context 'custom validation: max_bid_is_higher_than_current_bid_price' do
       let(:bid) do
-        build(:bid, auction: auction, user: user, current_bid_price: 200, max_bid_price: 150, autobid: true)
+        build(:bid, auction: auction, user: user, current_bid_price: 200,
+                    max_bid_price: 150, autobid: true)
       end
 
       it 'is invalid if max_bid_price < current_bid_price' do
@@ -90,10 +93,12 @@ RSpec.describe Bid do
   describe 'callbacks' do
     context 'after create' do
       let!(:highest_bid) do
-        create(:bid, auction: auction, user: user, current_bid_price: 200, max_bid_price: 300)
+        create(:bid, auction: auction, user: user, current_bid_price: 200,
+                     max_bid_price: 300)
       end
       let(:new_bid) do
-        build(:bid, auction: auction, user: user, current_bid_price: 300, max_bid_price: 300)
+        build(:bid, auction: auction, user: user, current_bid_price: 300,
+                    max_bid_price: 300)
       end
 
       it 'updates auction.current_highest_bid' do
@@ -108,9 +113,9 @@ RSpec.describe Bid do
 
       it 'enqueues AutoBidJob unless system_generated' do
         Sidekiq::Worker.clear_all
-        expect {
-          new_bid.save!  # triggers callback
-        }.to change(AutoBidJob.jobs, :size).by(1)
+        expect do
+          new_bid.save! # triggers callback
+        end.to change(AutoBidJob.jobs, :size).by(1)
 
         job = AutoBidJob.jobs.last
         expect(job['args']).to eq([new_bid.auction.id])
@@ -124,7 +129,7 @@ RSpec.describe Bid do
           user: create(:user),
           current_bid_price: 400,
           system_generated: true,
-          max_bid_price: 600
+          max_bid_price: 600,
         )
         system_bid.save!
         expect(AutoBidJob).not_to have_been_enqueued

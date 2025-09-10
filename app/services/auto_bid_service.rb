@@ -8,8 +8,14 @@ class AutoBidService
   def call
     ActiveRecord::Base.transaction do
       auction = Auction.find_by(id: @auction_id)
-      raise ActiveRecord::RecordNotFound, "Auction #{@auction_id} not found" unless auction
-      raise AuctionErrors::AuctionInactiveError, "Auction #{@auction_id} is not active" unless auction.active?
+      unless auction
+        raise ActiveRecord::RecordNotFound,
+              "Auction #{@auction_id} not found"
+      end
+      unless auction.in_progress?
+        raise AuctionErrors::AuctionInactiveError,
+              "Auction #{@auction_id} is not active"
+      end
 
       triggering_bid = auction.current_highest_bid
       return if triggering_bid.blank? || triggering_bid.system_generated?
@@ -32,10 +38,13 @@ class AutoBidService
       final_price = determine_final_price(current_price, auction.minimum_increment,
                                           highest_autobid, second_highest_autobid)
 
-      bid = build_new_bid(auction, highest_autobid.user, final_price, highest_autobid.max_bid_price)
+      bid = build_new_bid(auction, highest_autobid.user, final_price,
+                          highest_autobid.max_bid_price)
       unless bid.save
-        raise AuctionErrors::AuctionBidCreationError, "Failed to create bid: #{bid.errors.full_messages.join(', ')}"
+        raise AuctionErrors::AuctionBidCreationError,
+              "Failed to create bid: #{bid.errors.full_messages.join(', ')}"
       end
+
       bid
     end
   end
@@ -60,7 +69,7 @@ class AutoBidService
       status: :active,
       autobid: true,
       max_bid_price: max_price,
-      system_generated: true
+      system_generated: true,
     )
   end
 end

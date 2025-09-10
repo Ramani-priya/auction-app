@@ -1,13 +1,15 @@
+# frozen_string_literal: true
 
 require 'rails_helper'
 RSpec.describe AuctionEndNotifier, type: :model do
-  let(:auction) { create(:auction, end_time: 1.hour.ago, status: "ended") }
+  let(:auction) { create(:auction, end_time: 1.hour.ago, status: 'ended') }
   let(:mailer) { double('AuctionEndedMailer') }
   let(:seller_email) { double('Mailer') }
 
   describe '.notify' do
     it 'sends an email to the seller' do
-      allow(AuctionEndedMailer).to receive(:with).with(auction: auction, seller: auction.seller).and_return(mailer)
+      allow(AuctionEndedMailer).to receive(:with).with(auction: auction,
+                                                       seller: auction.seller).and_return(mailer)
       allow(mailer).to receive(:seller_email).and_return(seller_email)
       allow(seller_email).to receive(:deliver_later)
       described_class.notify(auction)

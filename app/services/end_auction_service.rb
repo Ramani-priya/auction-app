@@ -25,4 +25,3 @@ class EndAuctionService
     @auction.active? && @auction.end_time <= Time.current
   end
 end
-

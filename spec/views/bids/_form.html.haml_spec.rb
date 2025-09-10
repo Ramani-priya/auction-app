@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "bids/_form.html.haml", type: :view do
+RSpec.describe 'bids/_form.html.haml', type: :view do
   let(:auction) { create(:auction) }
   let(:bid) { build(:bid, auction: auction) }
 
@@ -9,7 +11,7 @@ RSpec.describe "bids/_form.html.haml", type: :view do
     assign(:bid, bid)
   end
 
-  it "renders the form fields" do
+  it 'renders the form fields' do
     render
     expect(rendered).to have_field('bid_current_bid_price')
     expect(rendered).to have_field('bid_max_bid_price')

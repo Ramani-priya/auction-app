@@ -13,4 +13,3 @@ module BidsHelper
     auction.current_highest_bid&.current_bid_price || auction.starting_price
   end
 end
-

@@ -6,7 +6,8 @@ class WebhookClient
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = uri.scheme == 'https'
 
-    request = Net::HTTP::Post.new(uri.request_uri, default_headers.merge(headers))
+    request = Net::HTTP::Post.new(uri.request_uri,
+                                  default_headers.merge(headers))
     request.body = payload.to_json
 
     response = http.request(request)
@@ -17,11 +18,9 @@ class WebhookClient
     nil
   end
 
-  private
-
   def self.default_headers
     {
-      'Content-Type' => 'application/json'
+      'Content-Type' => 'application/json',
     }
   end
 

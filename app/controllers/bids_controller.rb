@@ -6,12 +6,15 @@ class BidsController < ApplicationController
 
   def index
     @user_bids = current_user.bids.includes({ auction: :item })
-                  .order(created_at: :desc)
-                  .page(params[:page])
-                  .per(10)
+                             .order(created_at: :desc)
+                             .page(params[:page])
+                             .per(10)
   end
 
   def new
+    unless @auction.in_progress?
+      redirect_to @auction, alert: 'Auction is not active'
+    end
     @bid = @auction.bids.build
   end
 
@@ -27,7 +30,10 @@ class BidsController < ApplicationController
   private
 
   def set_auction
-    @auction = Auction.find(params[:auction_id])
+    @auction = Auction.find_by(id: params[:auction_id])
+    return if @auction
+
+    redirect_to auctions_path, alert: 'Auction does not exist'
   end
 
   def bid_params

@@ -27,7 +27,8 @@ class Bid < ApplicationRecord
   end
 
   def price_is_higher_than_current_highest_bid
-    return unless auction && auction.current_highest_bid
+    return unless auction&.current_highest_bid
+
     if auction.current_highest_bid
       if current_bid_price <= auction.current_highest_bid.current_bid_price
         errors.add(:current_bid_price,
@@ -40,6 +41,7 @@ class Bid < ApplicationRecord
 
   def max_bid_is_higher_than_current_bid_price
     return unless max_bid_price.present? && max_bid_price < current_bid_price
+
     errors.add(:max_bid_price, 'cannot be less than the current bid price')
   end
 end

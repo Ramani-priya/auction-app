@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NotifyWinnerJob
   include Sidekiq::Job
 

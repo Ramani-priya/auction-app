@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_09_10_062048) do
+ActiveRecord::Schema[7.0].define(version: 2025_09_10_181357) do
   create_table "auction_results", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "auction_id", null: false
     t.bigint "winning_bid_id", null: false
@@ -41,6 +41,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_09_10_062048) do
     t.index ["seller_id", "status"], name: "index_auctions_on_seller_id_and_status"
     t.index ["seller_id"], name: "index_auctions_on_seller_id"
     t.index ["status", "end_time"], name: "index_auctions_on_status_and_end_time"
+    t.index ["status", "start_time", "end_time"], name: "index_auctions_on_status_and_start_time_and_end_time"
   end
 
   create_table "bid_histories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

@@ -15,6 +15,6 @@
 %h2 Published Auctions
 - if @published_auctions.any?
   - @published_auctions.each do |auction|
-    = render "auctions/auction_card", auction: auction, show_price: true, show_description: true, show_details: true, show_publish: false
+    = render "auctions/auction_card", auction: auction, show_price: true, show_description: true, show_details: true
 - else
   %p No published auctions.

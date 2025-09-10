@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AuctionResultNotifier
   require 'net/http'
   require 'json'
@@ -10,7 +12,7 @@ class AuctionResultNotifier
       auction_id: auction.id,
       winner_id: auction.current_highest_bid.user_id,
       final_price: auction.current_highest_bid.current_bid_price,
-      ended_at: auction.end_time || Time.current
+      ended_at: auction.end_time || Time.current,
     }
 
     send_webhook(auction, payload)
@@ -19,11 +21,10 @@ class AuctionResultNotifier
     Rails.logger.error "Failed to notify external system: #{e.class} - #{e.message}"
   end
 
-  private
-
-  def self.send_webhook(auction, payload)
+  def self.send_webhook(_auction, payload)
     webhook_url = WEBHOOK_CONFIG[:auction_result_url]
-    return unless webhook_url.present?
+    return if webhook_url.blank?
+
     headers = { 'Authorization' => "Bearer #{WEBHOOK_CONFIG[:auction_result_token]}" }
     WebhookClient.send(webhook_url, payload, headers)
   end
@@ -31,7 +32,9 @@ class AuctionResultNotifier
   def self.send_emails(auction)
     winner = auction.current_highest_bid.user
     seller = auction.seller
-    AuctionResultMailer.with(auction: auction, winner: winner, seller: seller).winner_email.deliver_later
-    AuctionResultMailer.with(auction: auction, winner: winner, seller: seller).seller_email.deliver_later
+    AuctionResultMailer.with(auction: auction, winner: winner,
+                             seller: seller).winner_email.deliver_later
+    AuctionResultMailer.with(auction: auction, winner: winner,
+                             seller: seller).seller_email.deliver_later
   end
 end

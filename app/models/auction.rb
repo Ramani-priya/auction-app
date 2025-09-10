@@ -20,16 +20,28 @@ class Auction < ApplicationRecord
 
   after_update_commit :trigger_auto_bidding
 
+  scope :with_active_status, -> { where(status: 'active') }
+
   scope :pending_to_end, lambda {
-    active.where(end_time: ..Time.current)
+    with_active_status.where(end_time: ..Time.current)
   }
+
+  scope :active, lambda {
+    with_active_status.where('start_time <= ? and end_time > ?', Time.current, Time.current)
+  }
+
+  scope :published, -> { where(status: 'active') }
 
   delegate :title, to: :item, allow_nil: true
 
   def trigger_auto_bidding
-    if saved_change_to_current_highest_bid_id? && current_highest_bid.present? && active?
+    if saved_change_to_current_highest_bid_id? && current_highest_bid.present? && in_progress?
       AutoBidTriggerService.new(self).call
     end
+  end
+
+  def in_progress?
+    active? && start_time <= Time.current && end_time > Time.current
   end
 
   def minimum_increment

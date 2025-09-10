@@ -1,6 +1,6 @@
-= render "auctions/auction_card", auction: @auction, show_price: true, show_description: true, show_details: false
+= render "auctions/auction_card", auction: @auction, show_price: true, show_description: true
 
-- if user_signed_in? && current_user != @auction.seller
+- if allow_to_place_bid(@auction, current_user)
   = link_to "Place a Bid", new_auction_bid_path(@auction), class: "btn btn-primary button-link"
 
 = link_to "← Back", :back, class: "button btn btn-secondary"

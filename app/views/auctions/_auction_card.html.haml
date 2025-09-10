@@ -8,6 +8,14 @@
 
   = auction_price(auction, show_price)
   = auction_description(auction, show_description)
+  %div.auction-timings
+    %dl
+      %div.timing.start
+        %dt Start Time:
+        %dd= auction_start_time(auction)
+      %div.timing.end
+        %dt End Time:
+        %dd= auction_end_time(auction)
 
   %div.page-wrapper
     = auction_details_link(auction, show_details)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AuctionEndedMailer < ApplicationMailer
   default from: 'no-reply@bidsphere.com'
 

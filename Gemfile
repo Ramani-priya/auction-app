@@ -11,6 +11,7 @@ gem 'devise'
 gem 'haml-rails'
 gem 'importmap-rails'
 gem 'jbuilder'
+gem 'kaminari'
 gem 'mysql2', '~> 0.5'
 gem 'puma', '~> 5.0'
 gem 'pundit'
@@ -23,7 +24,6 @@ gem 'sprockets-rails'
 gem 'stimulus-rails'
 gem 'turbo-rails'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
-gem 'kaminari'
 
 group :development, :test do
   gem 'database_cleaner-active_record'
@@ -39,6 +39,7 @@ group :development, :test do
 end
 
 group :development do
+  gem 'letter_opener'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false

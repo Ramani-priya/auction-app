@@ -4,19 +4,19 @@ require 'rails_helper'
 
 RSpec.describe Auction do
   describe 'associations' do
-    let(:seller) { create(:user) }
-    let(:item) { create(:item) }
-
     subject do
-      Auction.new(
+      described_class.new(
         starting_price: 10,
         min_selling_price: 20,
         start_time: 1.hour.ago,
         end_time: 1.hour.from_now,
         seller: seller,
-        item: item
+        item: item,
       )
     end
+
+    let(:seller) { create(:user) }
+    let(:item) { create(:item) }
 
     it { is_expected.to belong_to(:item).optional }
     it { is_expected.to belong_to(:seller).class_name('User') }
@@ -33,8 +33,14 @@ RSpec.describe Auction do
     it { is_expected.to validate_presence_of(:min_selling_price) }
     it { is_expected.to validate_presence_of(:start_time) }
     it { is_expected.to validate_presence_of(:end_time) }
-    it { is_expected.to validate_numericality_of(:starting_price).is_greater_than_or_equal_to(0) }
-    it { is_expected.to validate_numericality_of(:min_selling_price).is_greater_than_or_equal_to(0) }
+
+    it {
+      expect(subject).to validate_numericality_of(:starting_price).is_greater_than_or_equal_to(0)
+    }
+
+    it {
+      expect(subject).to validate_numericality_of(:min_selling_price).is_greater_than_or_equal_to(0)
+    }
 
     it 'validates end_time > start_time' do
       auction = build(
@@ -44,7 +50,7 @@ RSpec.describe Auction do
         start_time: 1.hour.ago,
         end_time: 2.hours.ago,
         seller: seller,
-        item: item
+        item: item,
       )
       expect(auction).not_to be_valid
       expect(auction.errors[:end_time]).to include("must be greater than #{auction.start_time}")
@@ -54,7 +60,7 @@ RSpec.describe Auction do
   describe 'aasm transitions' do
     it 'transitions from draft → active' do
       auction = build(:auction, status: :draft)
-      auction.start_auction!  # trigger the event
+      auction.start_auction! # trigger the event
       expect(auction).to be_active
     end
 
@@ -75,13 +81,13 @@ RSpec.describe Auction do
     end
   end
 
-
   describe '.pending_to_end' do
     it 'returns active auctions that have passed end_time' do
       past_auction = create(:auction, status: :active, end_time: 1.minute.ago)
-      future_auction = create(:auction, status: :active, end_time: 1.hour.from_now)
-      expect(Auction.pending_to_end).to include(past_auction)
-      expect(Auction.pending_to_end).not_to include(future_auction)
+      future_auction = create(:auction, status: :active,
+                                        end_time: 1.hour.from_now)
+      expect(described_class.pending_to_end).to include(past_auction)
+      expect(described_class.pending_to_end).not_to include(future_auction)
     end
   end
 
@@ -96,7 +102,7 @@ RSpec.describe Auction do
         start_time: 1.hour.ago,
         end_time: 1.hour.from_now,
         seller: seller,
-        item: item
+        item: item,
       )
     end
     let(:winning_user) { create(:user) }

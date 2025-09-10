@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe AuctionsController, type: :request do
@@ -6,33 +8,34 @@ RSpec.describe AuctionsController, type: :request do
 
   before { sign_in user }
 
-  describe "GET #index" do
-    it "returns a success response" do
+  describe 'GET #index' do
+    it 'returns a success response' do
       get auctions_path
       expect(response).to be_successful
     end
   end
 
-  describe "GET #show" do
-    it "returns a success response" do
+  describe 'GET #show' do
+    it 'returns a success response' do
       get auction_path(auction)
       expect(response).to be_successful
     end
   end
 
-  describe "GET #new" do
-    it "returns a success response" do
+  describe 'GET #new' do
+    it 'returns a success response' do
       get new_auction_path
       expect(response).to be_successful
     end
   end
 
-  describe "POST #create" do
-    it "creates a new auction" do
+  describe 'POST #create' do
+    it 'creates a new auction' do
       item = create(:item)
-      expect {
-        post auctions_path, params: { auction: attributes_for(:auction, item_id: item.id) }
-      }.to change(Auction, :count).by(1)
+      expect do
+        post auctions_path,
+             params: { auction: attributes_for(:auction, item_id: item.id) }
+      end.to change(Auction, :count).by(1)
     end
   end
 end

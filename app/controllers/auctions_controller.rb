@@ -12,16 +12,16 @@ class AuctionsController < ApplicationController
     else
       @auctions = Auction.active
     end
-    @auctions = @auctions.includes(:item,:current_highest_bid)
-                  .page(params[:page])
-                  .per(10) 
+    @auctions = @auctions.includes(:item, :current_highest_bid)
+                         .page(params[:page])
+                         .per(10)
   end
 
   def manage_auctions
     @draft_auctions = current_user.auctions.draft.includes(:item,
                                                            :current_highest_bid)
-    @published_auctions = current_user.auctions.active.includes(:item,
-                                                                :current_highest_bid)
+    @published_auctions = current_user.auctions.published.includes(:item,
+                                                                   :current_highest_bid)
   end
 
   def show; end
@@ -59,8 +59,9 @@ class AuctionsController < ApplicationController
   end
 
   def authorize_seller
-    unless @auction.seller == current_user
-      redirect_to auctions_path, alert: 'Not authorized to publish this auction.'
-    end
+    return if @auction.seller == current_user
+
+    redirect_to auctions_path,
+                alert: 'Not authorized to publish this auction.'
   end
 end
