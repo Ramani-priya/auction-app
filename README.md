@@ -1,164 +1,81 @@
-BidNest
+# BidNest
 
-BidNest is a lightweight auction platform built with Ruby on Rails, allowing users to create, manage, and participate in auctions. The application supports real-time bidding, automated auction ending, and an elegant, responsive UI for both bidders and sellers.
+**BidNest** is a lightweight auction platform built with Ruby on Rails. It allows users to create, manage, and participate in auctions with real-time bidding, automated auction ending, and a clean, responsive UI.
 
-Features
-Core Functionality
+---
 
-Auction Management: Users can create, edit, publish, and delete auctions.
+## Features
 
-Draft & Published Auctions: Draft auctions can be saved and published later. Published auctions are visible to all bidders.
+### Core Functionality
+- **Auction Management:** Users can create, edit, publish, and delete auctions.
+- **Draft & Published Auctions:** Draft auctions can be saved and published later. Published auctions are visible to all bidders.
 
-Bidding System:
+### Bidding System
+- Users can place bids on active auctions.
+- Only the leading bid is automatically updated to beat a challenger.
+- Users can view their bids in a personalized dashboard.
 
-Users can place bids on active auctions.
+### Auction End Automation
+- Auctions automatically end at their `ends_at` time.
+- Background workers handle auction finalization efficiently with Sidekiq.
 
-Only the leading bid is automatically updated to beat a challenger.
+### User Authentication
+- Implemented via `devise` for secure login/logout and account management.
 
-Users can view their bids in a personalized dashboard.
+### Responsive UI
+- Custom-designed cards and buttons for auctions and bids.
+- Elegant blue-and-white theme for a clean, professional look.
 
-Auction End Automation:
+### Error Handling
+- Proper validation for bids, auctions, and user inputs.
+- Graceful handling of exceptions.
 
-Auctions automatically end at their ends_at time.
+### Dashboard
+- View draft and published auctions.
+- Auction cards show title, price, description, and actions.
+- User bids are displayed in a dedicated section.
 
-Background workers handle auction finalization efficiently with Sidekiq.
+---
 
-User Authentication: Implemented via Devise for secure login/logout and account management.
+## Key Assumptions & Design Decisions
 
-Responsive UI:
+### Data Immutability
+- Auctions and bids are immutable to prevent race conditions. Once placed, they cannot be edited or deleted.
+- Sellers can edit auctions while in draft state. Once published, auctions become immutable.
 
-Custom-designed cards and buttons for auctions and bids.
+### Concurrency and Race Conditions
+- **Simultaneous Bids:** Optimistic locking is used. If two bids are placed at the same time, one transaction may fail and require a retry.
+- **Auto-Bid Job Queue:** Auto-bids are processed in FIFO order via Sidekiq for fairness and predictability.
 
-Elegant blue-and-white theme for a clean, professional look.
+#### Handling Edge Cases
+- Auto-bidders with the same `max_bid_price` are resolved by tie-breaking based on the earliest bid creation time.
 
-Error Handling: Proper validation for bids, auctions, and user inputs. Graceful handling of exceptions.
+---
 
-Dashboard: View draft and published auctions
+## Auto-Bidding Logic
 
-Auction Card: Shows title, price, description, and action buttons
+- **Winning Bidder:** The highest `max_bid_price` wins. Ties are resolved by bid creation time.
+- **Winning Price:** The final price is the minimum of:
+  1. The highest bidder’s `max_bid_price`.
+  2. The second-highest bidder’s `max_bid_price` plus the auction’s `minimum_increment`.
+- **Handling Ties:** When multiple bidders have the same `max_bid_price`, the first bidder wins at the price of the current highest bid plus the minimum increment.
 
-User Bids: Displays bids placed by the logged-in user
+This ensures bidders never pay more than necessary to win.
 
-Technology Stack
+---
 
-Backend: Ruby 3.1.3, Ruby on Rails 7
+## Usage
 
-Frontend: Haml, ERB, CSS
+1. Sign up or log in as a user.
+2. Use the dashboard to navigate **Sell / Buy / My Bids**.
+3. In **Sell (Manage Auctions)**, create new auctions or publish drafts.
+4. View all published auctions in **Buy**, and place bids.
+5. Enable autobid to automatically outbid challengers within your max price.
+6. Track all active bids in **My Bids**.
+7. Auctions automatically end at `ends_at` and winners are chosen based on the final price.
 
-Database: MySQL
+### Screenshots on usage
 
-Background Jobs: Sidekiq (for auction autobidding and auto-ending)
-
-Authentication: Devise gem
-
-Testing: RSpec (optional for unit and integration tests)
-
-Version Control: Git & GitHub
-
-Key Assumptions & Design Decisions
-Data Immutability
-Auctions and Bids: For simplicity and to prevent race conditions, we've made auctions and bids immutable. They cannot be edited, deleted, or archived once they are placed.
-
-Drafts: Sellers can edit auctions while they are in the draft state. Once an auction is published, it becomes immutable. This aligns with a clean and predictable data model.
-
-Concurrency and Race Conditions
-Simultaneous Bids: In the rare event that two bids are placed at the exact same time, optimistic locking is used to handle the conflict. One of the database transactions will fail with a StaleObjectError. The user will receive a 422 Unprocessable Entity response, preventing a bad state and requiring them to retry the bid.
-
-Auto-Bid Job Queue: Auto-bid requests are processed by a Sidekiq job queue, which processes bids in a first-in, first-out (FIFO) order. This ensures fairness and predictable behavior. If a manual bid and an auto-bid attempt to update the auction simultaneously, the same optimistic locking mechanism will apply.
-
-To account for the edge case where multiple auto-bidders have the same max_bid_price, you need to refine your auto-bidding algorithm's logic. This scenario requires a tie-breaker rule, which is typically based on the bid's creation time.
-
-Here's the refined logic to handle this case, along with the updated determine_final_price method and its corresponding explanation for the README.
-
-Auto-Bidding Logic
-The core auto-bidding algorithm is designed to ensure the winning bidder always pays the lowest possible amount while outbidding the competition. The logic is based on three key factors: the highest max bid, the second-highest max bid, and the earliest creation time for ties.
-
-Winning Bidder: The bidder with the highest max_bid_price wins the outbidding war. In case of a tie in max_bid_price, the bidder who placed their auto-bid earliest (first to bid) wins.
-
-Winning Price: The final price is determined by the min() of two values:
-
-The highest bidder's max_bid_price.
-
-The second-highest bidder's max_bid_price plus the auction's minimum_increment.
-
-Handling Ties: If multiple bidders have the same max_bid_price, the second-highest bid is effectively the current highest bid since they are tied. The new bid will be created by the first bidder to place their bid at the price of the current highest bid + the minimum increment.
-
-This approach ensures that a bidder never pays more than necessary to win the auction.
-
-
-Installation
-
-
-Clone the repository:
-
-git clone https://github.com/Ramani-priya/auction-app.git
-cd auction-app
-
-
-Install dependencies:
-
-install Ruby v 3.1.3, mysql, redis, bundler
-
-Minimal required gems for submission:
-
-rails, mysql2, puma
-
-devise user management, authentication
-
-sidekiq, sidekiq-scheduler (background jobs)
-
-haml-rails (views), letter_opener for local email testing, kaminari for pagination
-
-rspec-rails, factory_bot_rails, faker (tests)
-
-rubocop, rubocop-rails, rubocop-performance
-
-webmock for external api mock tests
-
-pry, pry-debug for debugging
-
-
-Install the gem dependencies
-
-bundle install
-
-
-Set up the database:
-
-rails db:create db:migrate (optional RAILS_ENV=test if setting up test db)
-
-
-Start Sidekiq for background jobs:
-
-bundle exec sidekiq
-
-
-Run the Rails server:
-
-rails server
-
-
-Visit http://localhost:3000 in your browser.
-
-Usage
-
-Sign up or log in as a user.
-
-The dashboard is a KISS principle based design, where we show sell / buy / my bids
-
-Navigate to Sell space (Manage Auctions) to create new auctions, publish draft auctions, view the auctions currently published by you.
-
-Draft auctions can be published later (publish button)
-
-View all published and active auctions in the Buy space to place bids, users who are not sellers of the auction can place bid
-
-You can choose to place autobids, so if a new buyer bids for a higher price an autobid is created on behalf of you with minimum increment as long as it is less than the max bid price you choose while placing a bid
-
-Monitor all your active bids in the My Bids section.
-
-Auctions automatically end, and the highest bidder wins if the price meets the minimum selling price.
-
-Refer to below screenshots for a quick reference:
 <img width="1393" height="717" alt="Screenshot 2025-09-11 at 12 44 10 AM" src="https://github.com/user-attachments/assets/b5a6460d-904d-45f3-9731-cad85b93fba5" />
 <img width="1378" height="519" alt="Screenshot 2025-09-11 at 12 45 09 AM" src="https://github.com/user-attachments/assets/7bd52af0-c75c-4559-8573-9aa0e0347b7a" />
 <img width="1382" height="715" alt="Screenshot 2025-09-11 at 12 47 02 AM" src="https://github.com/user-attachments/assets/7bbfe0bb-ac14-4554-a96b-5b4955fa6595" />
@@ -168,80 +85,142 @@ Refer to below screenshots for a quick reference:
 <img width="1341" height="519" alt="Screenshot 2025-09-11 at 12 47 40 AM" src="https://github.com/user-attachments/assets/18d73e40-d2e7-4e62-a362-a569b429c45d" />
 <img width="1366" height="612" alt="Screenshot 2025-09-11 at 12 48 27 AM" src="https://github.com/user-attachments/assets/32a995ec-0841-4a13-ac94-35b20cf67477" />
 
-emails after auction has ended
+## emails after auction has ended
 <img width="1099" height="344" alt="Screenshot 2025-09-11 at 12 24 40 AM" src="https://github.com/user-attachments/assets/346ee485-b0c5-44c3-ae99-9cbf73d0d33f" />
 <img width="1211" height="416" alt="Screenshot 2025-09-11 at 12 25 29 AM" src="https://github.com/user-attachments/assets/3af05337-4c38-4f5a-9314-41270c791238" />
 <img width="1217" height="357" alt="Screenshot 2025-09-11 at 12 25 42 AM" src="https://github.com/user-attachments/assets/4fafd834-3f20-4190-85d6-cd74483b7e65" />
 
-External integrations (webhooks, configure in webhooks.yml file)
+---
+
+## External Integrations
+
+- Webhooks are configurable in `webhooks.yml`.
+
 <img width="1322" height="653" alt="Screenshot 2025-09-11 at 12 24 57 AM" src="https://github.com/user-attachments/assets/0574cab7-8949-4418-9a9d-cb6439226d25" />
 
+---
 
+## Cron Jobs & Background Workers
 
-Cron Jobs & Background Workers
+- **AutoBidJob:** Creates bids for users with autobid enabled.
+- **EndAuctionsJob:** Ends auctions that have reached their end time.
+- Jobs are scheduled via `sidekiq-scheduler` or cron.
 
-AutoBidJob: Run and creates bids on behalf of users who have chosen auto bid for auctions
-EndAuctionsJob: Ends auctions that have reached ends_at, marking winners and finalizing bids.
-Scheduling: Jobs can be scheduled via sidekiq-scheduler or cron for periodic execution.
+---
 
-Testing
+## Testing
 
-Unit and integration tests are written with RSpec.
+Tests are written using `rspec-rails`.
 
-Example command:
-
+```sh
 bundle exec rspec filepath
+```
+
+## Test Coverage Includes:
+
+✅ Auction creation, publishing, and deletion
+
+✅ Bidding workflow including bid creation and autobid processes
+
+✅ View specs, helper specs, and model validations
+
+✅ Service objects and notifier functionalities
+
+✅ Background job execution
+
+✅ Authentication and user-specific views
+
+<img width="1066" height="139" alt="Screenshot 2025-09-11 at 12 27 18 AM" src="https://github.com/user-attachments/assets/51845441-d085-4f85-ab7b-1f2332874af5" />
 
 
-Test coverage includes:
+## Code Quality
 
-Auction creation, publishing, and deletion
+**RuboCop** is configured for code consistency and best practices.
 
-Bidding workflow including bid creation, autobid processes
-
-View specs, helper specs, model specs for validations, callbacks
-
-services specs, notifier specs
-
-Background job execution
-
-Authentication and user-specific views
-
-<img width="1066" height="139" alt="Screenshot 2025-09-11 at 12 27 18 AM" src="https://github.com/user-attachments/assets/56e580f2-00aa-42fe-9973-318922552b67" />
-
-Future Improvements
-
-* Authorization gems
-* Caching
-* API and Webhooks extended configuration support
-* Real-time Updates
-* Payment and Settlement
-
-Code Quality
-
-RuboCop is configured to enforce consistent style and Rails best practices.
-
-Auto-correctable formatting issues can be fixed using:
-
+```sh
 bundle exec rubocop -A
+```
 
-Contributing
+## Tech Stack & Dependencies
 
-Fork the repository.
+**Primary Language/Framework:**
+- Ruby on Rails (Ruby 3.1.3, Rails ~> 7.0.8)
 
-Create a feature branch:
+**Database:**
+- MySQL
 
-git checkout -b feature/your-feature
+**Key Ruby Gems:**
+- `devise` (authentication)
+- `bootstrap`, `bootstrap-rails` (UI styling)
+- `haml-rails`, `importmap-rails`, `jbuilder`, `kaminari`, `mysql2`, `puma`, `pundit`, `rails`, `redis`, `sassc-rails`, `sidekiq`, `sidekiq-cron`, `stimulus-rails`, `turbo-rails`, `tzinfo-data`
+- For development/test: `database_cleaner-active_record`, `debug`, `factory_bot_rails`, `pry`, `pry-byebug`, `pry-rails`, `rspec-rails`, `rubocop`, `rubocop-capybara`, `rubocop-factory_bot`, `rubocop-performance`, `rubocop-rails`, `rubocop-rspec`, `web-console`
+- For test: `capybara`, `selenium-webdriver`, `shoulda-matchers`, `webmock`
 
+**Tools/Tech:**
+- Redis (for background jobs/sidekiq)
+- Sidekiq/Sidekiq-cron (background job processing)
+- Puma (web server)
+- Haml (templating)
+- Stimulus/Turbo (frontend interactivity)
 
-Make your changes and commit them with clear messages:
+## Setup Steps to Run Locally
 
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/Ramani-priya/auction-app.git
+   cd auction-app
+   ```
+2. **Install Ruby (3.1.3) and Bundler:**
+   - Use a Ruby version manager like `rbenv` or `rvm` to install Ruby 3.1.3.
+   - Install Bundler:
+     ```sh
+     gem install bundler
+     ```
+3. **Install MySQL and Redis:**
+   - Install MySQL (make sure the server is running).
+   - Install Redis (make sure the server is running).
+
+4. **Install dependencies:**
+   ```sh
+   bundle install
+   ```
+5. **Set up the database:**
+   - Create and migrate the database:
+     ```sh
+     rails db:create
+     rails db:migrate
+     ```
+6. **(Optional) Seed the database:**
+   ```sh
+   rails db:seed
+   ```
+7. **Start Sidekiq (in a separate terminal):**
+   ```sh
+   bundle exec sidekiq
+   ```
+8. **Start the Rails server:**
+   ```sh
+   rails server
+   ```
+9. **Visit the app in your browser:**
+   - Open `http://localhost:3000`
+
+**Note:** Make sure you have the necessary MySQL and Redis development headers installed for building native extensions. If you encounter any errors, check for missing libraries or OS-specific dependencies typically required for compiling some Ruby gems.
+
+## Version Control: Git & GitHub
+
+## Contributing
+ - Fork the repository.
+ - Create a feature branch:
+ ```sh
+ git checkout -b feature/your-feature
+ ```
+- Make your changes and commit them with clear messages:
+```sh
 git commit -m "Add feature X"
+```
+- Push to your fork and create a Pull Request.
 
+## License
 
-Push to your fork and create a Pull Request.
-
-License
-
-This project is licensed under the MIT License. See the LICENSE
- file for details.
+This project is licensed under the MIT License. See the LICENSE file for details.
