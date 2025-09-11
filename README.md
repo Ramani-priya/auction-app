@@ -151,8 +151,7 @@ bundle exec rubocop -A
 
 **Key Ruby Gems:**
 - `devise` (authentication)
-- `bootstrap`, `bootstrap-rails` (UI styling)
-- `haml-rails`, `importmap-rails`, `jbuilder`, `kaminari`, `mysql2`, `puma`, `pundit`, `rails`, `redis`, `sassc-rails`, `sidekiq`, `sidekiq-cron`, `stimulus-rails`, `turbo-rails`, `tzinfo-data`
+- `haml-rails`, `importmap-rails`, `jbuilder`, `kaminari`, `mysql2`, `puma`, `rails`, `redis`, `sassc-rails`, `sidekiq`, `sidekiq-cron`, `tzinfo-data`
 - For development/test: `database_cleaner-active_record`, `debug`, `factory_bot_rails`, `pry`, `pry-byebug`, `pry-rails`, `rspec-rails`, `rubocop`, `rubocop-capybara`, `rubocop-factory_bot`, `rubocop-performance`, `rubocop-rails`, `rubocop-rspec`, `web-console`
 - For test: `capybara`, `selenium-webdriver`, `shoulda-matchers`, `webmock`
 
