@@ -15,11 +15,11 @@
     = f.text_area :description
 
   .field
-    = f.label :starting_price
+    = f.label :starting_price, "Stating Price (USD)"
     = f.number_field :starting_price, step: 0.1
   
   .field
-    = f.label :minimum_selling_price
+    = f.label :minimum_selling_price, "Minimum Price (USD)"
     = f.number_field :min_selling_price
 
   .field
@@ -32,4 +32,3 @@
 
   .actions
     = f.submit "Submit Auction", class: "button btn btn-primary"
-    = link_to 'Back', auctions_path, class: "btn button-link btn-primary"

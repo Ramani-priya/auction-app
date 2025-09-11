@@ -9,20 +9,16 @@ gem 'aasm'
 gem 'bootsnap', require: false
 gem 'devise'
 gem 'haml-rails'
-gem 'importmap-rails'
 gem 'jbuilder'
 gem 'kaminari'
 gem 'mysql2', '~> 0.5'
 gem 'puma', '~> 5.0'
-gem 'pundit'
 gem 'rails', '~> 7.0.8'
 gem 'redis', '~> 5.0'
 gem 'sassc-rails'
 gem 'sidekiq', '~> 7.0'
 gem 'sidekiq-cron'
 gem 'sprockets-rails'
-gem 'stimulus-rails'
-gem 'turbo-rails'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 group :development, :test do

@@ -41,7 +41,7 @@ class AuctionsController < ApplicationController
   def create
     @auction = CreateAuctionService.new(auction_params, current_user).call
     if @auction.persisted?
-      redirect_to @auction, notice: 'Auction was successfully created.'
+      redirect_to manage_auctions_auctions_path, notice: 'Auction was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
