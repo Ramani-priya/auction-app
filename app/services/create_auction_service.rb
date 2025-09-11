@@ -12,7 +12,7 @@ class CreateAuctionService
       @auction = @user.auctions.build(
         @auction_params.except(:title).merge(item: item),
       )
-      @auction.save!
+      @auction.save
     end
     @auction
   end

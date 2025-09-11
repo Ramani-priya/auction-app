@@ -27,7 +27,7 @@ class Bid < ApplicationRecord
   end
 
   def price_is_higher_than_current_highest_bid
-    return unless auction&.current_highest_bid
+    return if current_bid_price.blank? || auction&.current_highest_bid.blank?
 
     if auction.current_highest_bid
       if current_bid_price <= auction.current_highest_bid.current_bid_price
